@@ -137,6 +137,39 @@ Los filtros de ciudad, tipología y estado de evidencia son interactivos. Si el 
 el ranking agregado conserva la lectura principal. La entrega fue conciliada contra 220.031 anuncios,
 1.497 segmentos y 28 candidatos sin diferencias entre los CSV y el modelo.
 
+## Panel web avanzado
+
+El nivel Avanzado añade un panel web complementario con las mismas tres preguntas ejecutivas y las
+mismas exportaciones seguras que Power BI. Sus filtros coordinados permiten seleccionar ciudad,
+tipología, barrio y estado de evidencia. La vista estadística explica las tres familias de hipótesis,
+el tamaño del efecto, el intervalo de confianza, el valor p ajustado y la sensibilidad sin recalcular
+pruebas sobre selecciones arbitrarias.
+
+Para ejecutarlo directamente en el entorno Python:
+
+```powershell
+uv sync --locked --group dev
+uv run --locked airbnb-supply all --log-format json
+uv run --locked streamlit run dashboard/app.py
+```
+
+Para levantar el panel portable después de generar un build aprobado:
+
+```powershell
+docker compose run --rm pipeline all --log-format json
+docker compose up dashboard
+```
+
+Abre `http://localhost:8501`. El servicio del panel solo lee `data/powerbi/`; iniciarlo no modifica los
+datos ni vuelve a ejecutar el pipeline. `AIRBNB_DASHBOARD_PORT` permite cambiar el puerto publicado.
+Esta configuración está destinada a ejecución local o dentro de una red controlada, no a exposición
+pública sin autenticación y TLS.
+
+La [guía de estudio](docs/study-guide.md#15-panel-web-avanzado-uso-y-demostración) incluye el recorrido
+de filtros y un guion de presentación. La [aceptación avanzada](docs/acceptance/advanced-level.md) y la
+[evidencia Docker](docs/acceptance/advanced-dashboard-docker.md) registran conciliación, rendimiento,
+accesibilidad y límites.
+
 ## Dónde está documentado el código
 
 - `src/airbnb_supply_analysis/`: docstring de los 13 módulos, tipos y lógica de producción; el
@@ -178,9 +211,9 @@ privacidad, conteos, hashes y versión. Consulta la
 
 El trabajo se organizó mediante ramas por fase, commits atómicos, pull requests y un
 [Kanban de GitHub Projects](https://github.com/users/arnaldojrm4/projects/2) como fuente única de
-planificación. La verificación host actual registra 95 pruebas aprobadas. En la ejecución dentro del
-contenedor se aprobaron 94 y se omitió intencionadamente la prueba que intentaría iniciar Docker desde
-el propio contenedor.
+planificación. La verificación host del Nivel Avanzado registra 138 pruebas aprobadas. En la ejecución
+dentro del contenedor se aprobaron 128, se omitieron intencionadamente 2 smoke tests que intentarían
+iniciar Docker dentro de Docker y se excluyeron las 8 pruebas de datos completos ya cubiertas en host.
 
 ## Límites de interpretación
 
